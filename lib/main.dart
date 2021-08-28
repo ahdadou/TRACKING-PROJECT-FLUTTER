@@ -1,4 +1,5 @@
 import 'package:delivery/screens/home/home_screen.dart';
+import 'package:delivery/screens/login/login_page.dart';
 import 'package:delivery/screens/root/root_app.dart';
 import 'package:delivery/shared/utils/routs.dart';
 import 'package:delivery/theme.dart';
@@ -21,7 +22,7 @@ class MyApp extends StatelessWidget {
       // darkTheme: darkThemeData(context),
       theme: lightThemeData(context),
       // home: RootApp(),
-      initialRoute: RootPage.routeName,
+      initialRoute: LoginScreen.routeName,
       routes: routes,
     );
   }

@@ -78,58 +78,75 @@ class _ChatDetailPageState extends State<InboxPage> {
   }
 
   getInboxBody(BuildContext context) {
-    return SingleChildScrollView(
-      child: Column(
-        children: List.generate(
-            users.length,
-            (index) => InkWell(
-                  onTap: () {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (_) => MessagesPage()));
-                  },
-                  child: Container(
-                    width: context.width,
-                    decoration: BoxDecoration(
-                        border: Border(
-                            bottom: BorderSide(
-                                width: 1, color: Colors.grey.shade200))),
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 20, vertical: 10),
-                    margin: EdgeInsets.symmetric(vertical: 5),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        ClipOval(
-                          child: Image.network(
-                            users[index].image,
-                            height: 60,
-                            width: 60,
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Column(
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+          child: Text(
+            "MESSAGES",
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+          ),
+        ),
+        Expanded(
+          child: SingleChildScrollView(
+            child: Column(
+              children: List.generate(
+                  users.length,
+                  (index) => InkWell(
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (_) => MessagesPage()));
+                        },
+                        child: Container(
+                          width: context.width,
+                          decoration: BoxDecoration(
+                              border: Border(
+                                  bottom: BorderSide(
+                                      width: 1, color: Colors.grey.shade200))),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 20, vertical: 10),
+                          margin: EdgeInsets.symmetric(vertical: 5),
+                          child: Row(
                             mainAxisAlignment: MainAxisAlignment.start,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
-                                users[index].firstName,
-                                style: TextStyle(fontWeight: FontWeight.bold),
+                              ClipOval(
+                                child: Image.network(
+                                  users[index].image,
+                                  height: 60,
+                                  width: 60,
+                                  fit: BoxFit.cover,
+                                ),
                               ),
-                              Text(
-                                'Hi How are u bro im you freg sges ..',
-                                style: TextStyle(color: Colors.grey),
-                              )
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      users[index].firstName,
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                    Text(
+                                      'Hi How are u bro im you freg sges ..',
+                                      style: TextStyle(color: Colors.grey),
+                                    )
+                                  ],
+                                ),
+                              ),
                             ],
                           ),
                         ),
-                      ],
-                    ),
-                  ),
-                )),
-      ),
+                      )),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

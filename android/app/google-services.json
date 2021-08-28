@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "71967803507",
+    "project_id": "pegionman",
+    "storage_bucket": "pegionman.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:71967803507:android:99becf350a76829b17c206",
+        "android_client_info": {
+          "package_name": "com.example.delivery"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "71967803507-a1tjkd0qe4rdcntv5a84d92k3ppced57.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC6YelFSFKJWs7wAPVDxtA4hzOfze2d45M"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "71967803507-a1tjkd0qe4rdcntv5a84d92k3ppced57.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
