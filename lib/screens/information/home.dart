@@ -1,13 +1,19 @@
 import 'dart:io';
 
-import 'package:country_code_picker/country_code_picker.dart';
 import 'package:csc_picker/csc_picker.dart';
+import 'package:delivery/screens/root/root_app.dart';
+import 'package:delivery/services/blocs/updateData/updatedata_bloc.dart';
+import 'package:delivery/services/blocs/updateData/updatedata_event.dart';
+import 'package:delivery/services/blocs/updateData/updatedata_state.dart';
 import 'package:delivery/shared/components/default_radio.dart';
 import 'package:delivery/shared/components/primary_button.dart';
+import 'package:delivery/shared/models/userRequestDto.dart';
 import 'package:delivery/shared/utils/constants.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:delivery/shared/utils/size_config.dart';
 
 class Home extends StatefulWidget {
   const Home({Key key}) : super(key: key);
@@ -21,14 +27,12 @@ class _HomeState extends State<Home> {
   String lastname;
   final List<String> errors = [];
   File imageFile;
-  String country;
   final _formKey = GlobalKey<FormState>();
   List<RadioModel> sampleData = [];
   bool hire = true;
   String countryValue = "";
   String stateValue = "";
   String cityValue = "";
-  String address = "";
 
   @override
   void initState() {
@@ -44,75 +48,107 @@ class _HomeState extends State<Home> {
           child: SingleChildScrollView(
         child: SizedBox(
           width: double.infinity,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              SizedBox(
-                height: 20,
-              ),
-              Text("Complete your account",
-                  style: GoogleFonts.montserrat(
-                      fontSize: 25,
-                      fontWeight: FontWeight.w900,
-                      color: kPrimaryColor)),
-              Text("setup",
-                  style: GoogleFonts.montserrat(
-                      fontSize: 25,
-                      fontWeight: FontWeight.w900,
-                      color: kPrimaryColor)),
-              SizedBox(
-                height: 50,
-              ),
-              imagePick(),
-              Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 30.0, vertical: 30),
-                child: Column(
-                  children: [
-                    Form(
-                        key: _formKey,
+          child: BlocListener<UpdatedataBloc, UpdatedataState>(
+            listener: (context, state) {
+              if (state is UpdatedataSuccess) {
+                Navigator.pushNamed(context, RootPage.routeName);
+              }
+            },
+            child: BlocBuilder<UpdatedataBloc, UpdatedataState>(
+              builder: (context, state) {
+                if (state is UpdatedataLoading) {
+                  return Container(
+                    width: context.width,
+                    height: context.height,
+                    child: Center(
+                      child: CircularProgressIndicator(),
+                    ),
+                  );
+                } else if(state is UpdatedataInitial || state is UpdatedataFailler){
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      SizedBox(
+                        height: 20,
+                      ),
+                      Text("Complete your account",
+                          style: GoogleFonts.montserrat(
+                              fontSize: 25,
+                              fontWeight: FontWeight.w900,
+                              color: kPrimaryColor)),
+                      Text("setup",
+                          style: GoogleFonts.montserrat(
+                              fontSize: 25,
+                              fontWeight: FontWeight.w900,
+                              color: kPrimaryColor)),
+                      SizedBox(
+                        height: 50,
+                      ),
+                      imagePick(),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 30.0, vertical: 30),
                         child: Column(
                           children: [
-                            buildFirstnameFormField(),
+                            cityPicker(),
+                            Form(
+                                key: _formKey,
+                                child: Column(
+                                  children: [
+                                    buildFirstnameFormField(),
+                                    SizedBox(
+                                      height: 30,
+                                    ),
+                                    buildLastnameFormField(),
+                                    SizedBox(
+                                      height: 30,
+                                    ),
+                                    buildCityFormField()
+                                  ],
+                                )),
                             SizedBox(
                               height: 30,
                             ),
-                            buildLastnameFormField(),
+                            Text("I want to:",
+                                style: GoogleFonts.montserrat(
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w700,
+                                )),
+                            hirePicker(),
+                            SizedBox(
+                              height: 50,
+                            ),
+                            PrimaryButton(
+                              color: kPrimaryColor,
+                              title: "CONTINUE",
+                              press: () {
+                                if (_formKey.currentState.validate()) {
+                                  _formKey.currentState.save();
+
+                                  UserRequestDTO requestDTO =
+                                      new UserRequestDTO();
+                                  requestDTO.firstname = firstname;
+                                  requestDTO.lastname = lastname;
+                                  requestDTO.country = countryValue;
+                                  requestDTO.cityName = cityValue;
+                                  requestDTO.delivery = !hire;
+
+                                  BlocProvider.of<UpdatedataBloc>(context).add(
+                                      UpdateUserData(
+                                          userRequestDTO: requestDTO));
+                                }
+                              },
+                            ),
                           ],
-                        )),
-                    SizedBox(
-                      height: 30,
-                    ),
-                    cityPicker(),
-                    SizedBox(
-                      height: 30,
-                    ),
-                    Text("I want to:",
-                        style: GoogleFonts.montserrat(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w700,
-                        )),
-                    hirePicker(),
-                    SizedBox(
-                      height: 50,
-                    ),
-                    PrimaryButton(
-                      color: kPrimaryColor,
-                      title: "CONTINUE",
-                      press: () {
-                        if (_formKey.currentState.validate()) {
-                          _formKey.currentState.save();
-                          print("Continue");
-                          // if all are valid then go to success screen
-                          // Navigator.pushNamed(
-                          //     context, CompleteProfileScreen.routeName);
-                        }
-                      },
-                    ),
-                  ],
-                ),
-              )
-            ],
+                        ),
+                      )
+                    ],
+                  );
+                }else{
+                return Container();
+                }
+              },
+            ),
           ),
         ),
       )),
@@ -204,7 +240,7 @@ class _HomeState extends State<Home> {
         ///Adding CSC Picker Widget in app
         CSCPicker(
           ///Enable disable state dropdown [OPTIONAL PARAMETER]
-          showStates: true,
+          showStates: false,
 
           /// Enable disable city drop down [OPTIONAL PARAMETER]
           showCities: true,
@@ -269,7 +305,7 @@ class _HomeState extends State<Home> {
           onCityChanged: (value) {
             setState(() {
               ///store value in city variable
-              cityValue = value;
+              // cityValue = value;
             });
           },
         ),
@@ -339,6 +375,41 @@ class _HomeState extends State<Home> {
         prefixIcon: SizedBox(
           child: Icon(
             Icons.person,
+            color: Colors.grey,
+          ), // icon is 48px widget.
+        ),
+      ),
+    );
+  }
+
+  TextFormField buildCityFormField() {
+    return TextFormField(
+      // keyboardType: TextInputType.emailAddress,
+      onSaved: (newValue) => cityValue = newValue,
+      onChanged: (value) {
+        if (value.isNotEmpty) {
+          removeError(error: kLastNamelNullError);
+        }
+
+        return null;
+      },
+      validator: (value) {
+        if (value.isEmpty) {
+          addError(error: kLastNamelNullError);
+          return "";
+        }
+
+        return null;
+      },
+      decoration: InputDecoration(
+        labelText: "City",
+        hintText: "Enter your city",
+        // If  you are using latest version of flutter then lable text and hint text shown like this
+        // if you r using flutter less then 1.20.* then maybe this is not working properly
+        floatingLabelBehavior: FloatingLabelBehavior.always,
+        prefixIcon: SizedBox(
+          child: Icon(
+            Icons.location_history_sharp,
             color: Colors.grey,
           ), // icon is 48px widget.
         ),

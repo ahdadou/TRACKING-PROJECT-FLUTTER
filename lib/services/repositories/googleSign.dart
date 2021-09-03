@@ -70,21 +70,36 @@ class GoogleLogin {
     return null;
   }
 
-  Future<GoogleSignInAccount> handleSignIn() async {
+    Future<GoogleSignInAuthentication> handleSignIn() async {
     try {
-      await _googleSignIn.signIn().then((result) {
-        result.authentication.then((googleKey) {
-          print("----------------------from handleSignIn----------");
-          print('idToken => ' + googleKey.idToken.toString());
-          return result;
-        }).catchError((err) {
-          print('inner error');
-        });
+      GoogleSignInAuthentication res;
+      GoogleSignInAccount googleSignIn = await _googleSignIn.signIn();
+      await googleSignIn.authentication.then((value) {
+        res = value;
+        return value;
       });
+      return res;
     } catch (error) {
       print(error);
     }
   }
+
+
+  // Future<GoogleSignInAccount> handleSignIn() async {
+  //   try {
+  //     await _googleSignIn.signIn().then((result) {
+  //       result.authentication.then((googleKey) {
+  //         print("----------------------from handleSignIn----------");
+  //         print('idToken => ' + googleKey.idToken.toString());
+  //         return result;
+  //       }).catchError((err) {
+  //         print('inner error');
+  //       });
+  //     });
+  //   } catch (error) {
+  //     print(error);
+  //   }
+  // }
 
   Future<GoogleSignInAccount> getCurrentUser() async {
     return await _currentUser;

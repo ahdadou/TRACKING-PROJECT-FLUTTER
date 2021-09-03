@@ -25,10 +25,10 @@ class DefaultButton extends StatelessWidget {
           padding: const EdgeInsets.symmetric(vertical: 8.0),
           child: Row(
             children: [
-              SvgPicture.asset(
+             icon!=null ? SvgPicture.asset(
                 icon,
                 height: 40,
-              ),
+              ):Container(),
               SizedBox(
                 width: 25,
               ),

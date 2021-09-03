@@ -11,12 +11,15 @@ const icons = [
     "inactive": "assets/images/location.svg",
     "active": "assets/images/location_active.svg",
   },
-  {
-    "inactive": "assets/images/bell.svg",
-    "active": "assets/images/bell_active.svg",
-  },
+
   {
     "inactive": "assets/images/account.svg",
     "active": "assets/images/account_active.svg",
   },
 ];
+
+
+var notification=  {
+    "inactive": "assets/images/bell.svg",
+    "active": "assets/images/bell_active.svg",
+  };

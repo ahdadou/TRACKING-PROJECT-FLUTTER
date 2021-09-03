@@ -1,7 +1,11 @@
 import 'package:delivery/screens/home/home.dart';
-import 'package:delivery/screens/search/search_screen.dart';
-import 'package:delivery/shared/fakeData.dart';
+import 'package:delivery/services/blocs/delivery/delivery_bloc.dart';
+import 'package:delivery/services/repositories/LoginRepository.dart';
+import 'package:delivery/services/repositories/chatRepository.dart';
+import 'package:delivery/services/repositories/deliveriesRepository.dart';
+import 'package:delivery/shared/utils/bottom_navigation_bar_json.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -13,10 +17,21 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    stompClient.activate();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
+        resizeToAvoidBottomInset: false, 
       appBar: getAppbar(),
-      body: Home(),
+      body: BlocProvider(
+        create: (context) => DeliveryBloc()..add(fetchDeliveriesData()),
+        child: Home(),
+      ),
     );
   }
 
@@ -25,9 +40,10 @@ class _HomeScreenState extends State<HomeScreen> {
       preferredSize: Size.fromHeight(80),
       child: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 15),
+          padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10),
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Container(
                 width: 40,
@@ -35,42 +51,20 @@ class _HomeScreenState extends State<HomeScreen> {
                 decoration:
                     BoxDecoration(shape: BoxShape.circle, color: Colors.grey),
                 child: ClipOval(
-                  child: Image.network(
-                    profile,
-                    fit: BoxFit.cover,
-                  ),
-                ),
+                    child: tokenDto.value.image.toString() != null
+                        ? Image.network(
+                            tokenDto.value.image,
+                            fit: BoxFit.cover,
+                          )
+                        : Container()),
               ),
-              InkWell(
-                onTap: () {
-                  Navigator.pushNamed(context, SearchScreen.routeName);
-                },
-                child: Container(
-                  padding: EdgeInsets.symmetric(horizontal: 20),
-                  height: 40,
-                  width: 300,
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.all(Radius.circular(30)),
-                      color: Colors.grey.withOpacity(0.3)),
-                  child: Row(
-                    children: [
-                      SvgPicture.asset(
-                        "assets/images/search.svg",
-                        height: 20,
+              Container(
+                      child: SvgPicture.asset(
+                             notification['active'],
+                        width: 25,
+                        height: 25,
                       ),
-                      SizedBox(
-                        width: 20,
-                      ),
-                      Text(
-                        "Search",
-                        style: TextStyle(
-                            color: Colors.grey.withOpacity(0.7),
-                            fontWeight: FontWeight.w800),
-                      )
-                    ],
-                  ),
-                ),
-              )
+                    ),
             ],
           ),
         ),

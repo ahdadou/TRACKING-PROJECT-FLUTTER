@@ -17,17 +17,28 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     AuthEvent event,
   ) async* {
     try {
-      if (event is AuthEvent) {
-        yield AuthInitial();
-        var isAuth = await authRepository.isSignedIn();
-        if (isAuth) {
-          TokenDto tokenDto = await authRepository.getTokenDto();
+      if (event is startEvent) {
+        print("------------------------startEvent--------- => ");
+        yield AuthLoadingState();
+        TokenDto tokenDto = await authRepository.getTokenDto();
+        if (tokenDto.auth) {
           yield AuthenticatedState(tokenDto: tokenDto);
         } else {
           yield UnAuthenticatedState();
         }
+      } else if (event is googleLoginEvent) {
+        yield AuthLoadingState();
+        var tokenDto = await authRepository.googleLogin(event.idToken);
+        if(tokenDto.newAccount){
+          yield AuthenticatedNewAccountState(tokenDto: tokenDto);
+        }else if(tokenDto.newAccount ==false){  
+          yield AuthenticatedState(tokenDto: tokenDto);
+        }else{
+          yield UnAuthenticatedState();
+        }
       }
     } catch (e) {
+      print('-----------------catch Error-------------'+e.toString());
       yield UnAuthenticatedState();
     }
   }

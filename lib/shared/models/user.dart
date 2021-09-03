@@ -1,4 +1,5 @@
 class User {
+  final String id;
   final String firstName;
   final String lastName;
   final bool compteVerfie;
@@ -12,7 +13,8 @@ class User {
   final String phone;
 
   User(
-      {this.firstName,
+      {this.id,
+      this.firstName,
       this.lastName,
       this.compteVerfie,
       this.city,

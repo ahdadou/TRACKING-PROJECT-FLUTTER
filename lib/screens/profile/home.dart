@@ -1,18 +1,30 @@
+import 'package:delivery/screens/inbox/message_screen.dart';
 import 'package:delivery/shared/fakeData.dart';
+import 'package:delivery/shared/models/UserResponse.dart';
 import 'package:delivery/shared/utils/bottom_navigation_bar_json.dart';
 import 'package:delivery/shared/utils/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:delivery/services/repositories/chatRepository.dart'
+    as chatRepository;
 
 class Home extends StatefulWidget {
-  const Home({Key key}) : super(key: key);
+  final UserResponse userResponse;
+  const Home({Key key, this.userResponse}) : super(key: key);
 
   @override
   _HomeState createState() => _HomeState();
 }
 
 class _HomeState extends State<Home> {
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    print(widget.userResponse.firstname);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -29,28 +41,31 @@ class _HomeState extends State<Home> {
                 children: [
                   ClipOval(
                     child: Image.network(
-                      profile,
+                      widget.userResponse.image ?? profile,
                       fit: BoxFit.cover,
                       height: 80,
                       width: 80,
                     ),
                   ),
-                  Positioned(
-                      bottom: 10,
-                      right: 10,
-                      child: Container(
-                        width: 25,
-                        height: 25,
-                        decoration: BoxDecoration(
-                            shape: BoxShape.circle, color: Colors.blue[600]),
-                        child: Center(
-                          child: Icon(
-                            Icons.check,
-                            size: 19,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ))
+                  widget.userResponse.compteVerifie
+                      ? Positioned(
+                          bottom: 10,
+                          right: 10,
+                          child: Container(
+                            width: 25,
+                            height: 25,
+                            decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: Colors.blue[600]),
+                            child: Center(
+                              child: Icon(
+                                Icons.check,
+                                size: 19,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ))
+                      : Container()
                 ],
               ),
               Container(
@@ -61,7 +76,10 @@ class _HomeState extends State<Home> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(instagramName,
+                      Text(
+                          widget.userResponse.firstname +
+                              ' ' +
+                              widget.userResponse.lastname,
                           style: GoogleFonts.adventPro(
                               fontWeight: FontWeight.bold, fontSize: 20)),
                       Row(
@@ -74,7 +92,7 @@ class _HomeState extends State<Home> {
                                 borderRadius: BorderRadius.circular(30)),
                             child: Center(
                               child: Text(
-                                '2654',
+                                widget.userResponse.reviews.length.toString(),
                                 style: TextStyle(
                                     color: Colors.white,
                                     fontWeight: FontWeight.bold),
@@ -85,7 +103,8 @@ class _HomeState extends State<Home> {
                             // width: 100,
                             // height: 50,
                             child: RatingBarIndicator(
-                              rating: users[0].avergeRate,
+                              rating:
+                                  widget.userResponse.avergeRating.toDouble(),
                               itemBuilder: (context, index) => Icon(
                                 Icons.star,
                                 color: Colors.amber,
@@ -138,9 +157,10 @@ class _HomeState extends State<Home> {
         Expanded(
             flex: 4,
             child: SingleChildScrollView(
-                child: users.length > 0
+                child: widget.userResponse.reviews.length > 0
                     ? Column(
-                        children: List.generate(users.length, (index) {
+                        children: List.generate(
+                            widget.userResponse.reviews.length, (index) {
                         return Container(
                           margin: EdgeInsets.symmetric(vertical: 4),
                           padding: EdgeInsets.all(5),
@@ -159,7 +179,7 @@ class _HomeState extends State<Home> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  instagramBio,
+                                  widget.userResponse.reviews[index].body,
                                   style: GoogleFonts.lato(
                                       fontWeight: FontWeight.w600,
                                       fontSize: 15),
@@ -175,7 +195,8 @@ class _HomeState extends State<Home> {
                                       children: [
                                         ClipOval(
                                           child: Image.network(
-                                            users[index].image,
+                                            widget.userResponse.reviews[index]
+                                                .user_sender.image,
                                             height: 50,
                                             width: 50,
                                             fit: BoxFit.cover,
@@ -191,9 +212,14 @@ class _HomeState extends State<Home> {
                                               CrossAxisAlignment.start,
                                           children: [
                                             Text(
-                                              users[index].firstName +
+                                              widget.userResponse.reviews[index]
+                                                      .user_sender.firstname +
                                                   ' ' +
-                                                  users[index].lastName,
+                                                  widget
+                                                      .userResponse
+                                                      .reviews[index]
+                                                      .user_sender
+                                                      .lastname,
                                               style: TextStyle(
                                                   fontWeight: FontWeight.w500,
                                                   fontSize: 15),
@@ -202,7 +228,9 @@ class _HomeState extends State<Home> {
                                               // width: 100,
                                               // height: 50,
                                               child: RatingBarIndicator(
-                                                rating: users[index].avergeRate,
+                                                rating: widget.userResponse
+                                                    .reviews[index].rating
+                                                    .toDouble(),
                                                 itemBuilder: (context, index) =>
                                                     Icon(
                                                   Icons.star,
@@ -240,8 +268,16 @@ class _HomeState extends State<Home> {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
           child: InkWell(
-            onTap: () {
-              print("pass chat");
+            onTap: () async{
+
+              // var id = await chatRepository.getInboxId(widget.userResponse.email);
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) =>MessagesPage(
+                            userResponse: widget.userResponse,
+                            inboxId: -1,
+                          )));
             },
             child: Container(
               padding: EdgeInsets.all(20),

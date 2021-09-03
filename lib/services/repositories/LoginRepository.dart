@@ -4,7 +4,7 @@ import 'dart:typed_data';
 
 import 'package:delivery/services/apis.dart';
 import 'package:delivery/shared/models/TokenDto.dart';
-import 'package:delivery/shared/models/user.dart';
+import 'package:delivery/shared/models/userRequestDto.dart';
 import 'package:flutter/widgets.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
@@ -24,14 +24,37 @@ Future<TokenDto> googleLogin(String googleId) async {
 
   print("response  :" + response.statusCode.toString());
   if (response.statusCode == 200) {
-    TokenDto _tokenDto = TokenDto.fromJSON(json.decode(response.body));
-    String jwt = _tokenDto.value;
-    setAccessToken(jwt);
+    tokenDto.value = TokenDto.fromJSON(json.decode(response.body));
     setTokenDto(response.body);
-    print("--------------------From Login------=> :" + _tokenDto.toString());
-    // currentUser = await getUsreData(user.accessToken);
+    setEmail(tokenDto.value.email);
+    setAccessToken(tokenDto.value.value);
   }
   return tokenDto.value;
+}
+
+Future<void> logout() async {
+  tokenDto.value = new TokenDto();
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  await prefs.remove('token_dto');
+}
+
+Future<bool> updateDataUser(UserRequestDTO userRequestDTO) async {
+  final String url = API_ROOT + "oauth/update";
+  final client = new http.Client();
+  userRequestDTO.email=await getEmail();
+  print(await getEmail());
+  final response = await client.post(
+    Uri.parse(url),
+    headers: {HttpHeaders.contentTypeHeader: 'application/json'},
+    body: json.encode(userRequestDTO.toMap()),
+  );
+
+  print("response  :" + response.statusCode.toString());
+  if (response.statusCode == 200) {
+    return true;
+  } else {
+    return false;
+  }
 }
 
 void setAccessToken(jsonString) async {
@@ -41,6 +64,26 @@ void setAccessToken(jsonString) async {
   }
 }
 
+Future<String> getAccessToken() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString('access_token');
+}
+
+
+void setEmail(email) async {
+  if (email != null) {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('email', email);
+  }
+}
+
+Future<String> getEmail() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String email= prefs.getString('email');
+    return email;
+}
+
+
 void setCurrentUser(jsonString) async {
   if (json.decode(jsonString) != null) {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -49,9 +92,11 @@ void setCurrentUser(jsonString) async {
 }
 
 Future<TokenDto> getTokenDto() async {
-  SharedPreferences prefs = await SharedPreferences.getInstance();
-  if (tokenDto.value.auth == null && prefs.containsKey('token_dto')) {
-    tokenDto.value = TokenDto.fromJSON(await prefs.get('token_dto'));
+  print('---------------From getTokenDto--------------');
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
+  if (prefs.containsKey('token_dto')) {
+    tokenDto.value =
+        TokenDto.fromJSON(json.decode(await prefs.get('token_dto')));
     tokenDto.value.auth = true;
   } else {
     tokenDto.value.auth = false;
@@ -62,10 +107,10 @@ Future<TokenDto> getTokenDto() async {
 
 void setTokenDto(jsonString) async {
   try {
-    if (json.decode(jsonString)['data'] != null) {
+    if (json.decode(jsonString) != null) {
       SharedPreferences prefs = await SharedPreferences.getInstance();
-      await prefs.setString(
-          'token_dto', json.encode(json.decode(jsonString)['data']));
+      await prefs.setString('token_dto', jsonString);
+
     }
   } catch (e) {
     print(e.toString());
@@ -73,11 +118,12 @@ void setTokenDto(jsonString) async {
   }
 }
 
-@override
 Future<bool> isSignedIn() async {
   TokenDto currentuser = await getTokenDto();
   return currentuser.auth;
 }
+
+
 
 
 
