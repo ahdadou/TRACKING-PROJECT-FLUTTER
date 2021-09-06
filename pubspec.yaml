@@ -48,6 +48,8 @@ dependencies:
   flutter_secure_storage: ^4.2.1
   socket_io_client: ^1.0.1
   stomp_dart_client: ^0.4.3
+  sliding_up_panel: ^2.0.0+1
+  flutter_switch: ^0.3.2
 
 
 dev_dependencies:

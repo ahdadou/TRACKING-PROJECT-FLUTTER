@@ -131,7 +131,8 @@ Future<Messages> sendMessages({String receiver_email, String msg}) async {
 
 StompClient stompClient = StompClient(
   config: StompConfig(
-    url: "ws://192.168.1.103:9004/flutter",
+    // url: "ws://34.125.143.57/flutter",
+    url: "ws://192.168.1.106:9004/flutter",
     onConnect: onConnected,
     beforeConnect: () async {
       print('waiting to connect...');
