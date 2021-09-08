@@ -8,4 +8,9 @@ class Review {
   final DateTime createAt;
 
   Review({this.id, this.user_sender, this.rating, this.body, this.createAt});
+
+
+
+
+  
 }

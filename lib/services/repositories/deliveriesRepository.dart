@@ -54,6 +54,31 @@ Future<List<UserResponse>> getDeliveriesByCountry() async {
 }
 
 
+Future<List<UserResponse>> getAllUsers() async {
+  final String url = API_ROOT + "users/all/"+tokenDto.value.email;
+  final client = new http.Client();
+  final jwt = await getAccessToken();
+  final response = await client.get(
+    Uri.parse(url),
+    headers: {
+      HttpHeaders.contentTypeHeader: 'application/json',
+      HttpHeaders.authorizationHeader: 'Bearer ' + jwt
+    },
+  );
+  List<UserResponse> usersResponse = [];
+  print("response  :" + response.statusCode.toString());
+  if (response.statusCode == 200) {
+    var usersResponseJson = (json.decode(response.body) as List)
+        .map((e) => UserResponse.fromJSON(e))
+        .toList();
+    usersResponse = usersResponseJson;
+    return usersResponseJson;
+  }
+
+  return usersResponse;
+}
+
+
 Future<List<UserResponse>> getDeliveriesByCityOrEmail(String param) async {
   final String url = API_ROOT + "deliveries/filter?param="+param;
   final client = new http.Client();

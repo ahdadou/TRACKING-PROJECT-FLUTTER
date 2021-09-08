@@ -15,11 +15,9 @@ class InboxPage extends StatefulWidget {
   _ChatDetailPageState createState() => _ChatDetailPageState();
 }
 
-class _ChatDetailPageState extends State<InboxPage>{
-
+class _ChatDetailPageState extends State<InboxPage> {
   // @override
   // bool get wantKeepAlive => true;
-
 
   @override
   void initState() {
@@ -36,8 +34,6 @@ class _ChatDetailPageState extends State<InboxPage>{
       ),
     );
   }
-
- 
 
   getInboxBody(BuildContext context) {
     return BlocBuilder<InboxBloc, InboxState>(
@@ -67,7 +63,11 @@ class _ChatDetailPageState extends State<InboxPage>{
                                 Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                        builder: (_) => MessagesPage(userResponse: state.inbox[index].connectedUser,inboxId: state.inbox[index].id,)));
+                                        builder: (_) => MessagesPage(
+                                              userResponse: state
+                                                  .inbox[index].connectedUser,
+                                              inboxId: state.inbox[index].id,
+                                            )));
                               },
                               child: Container(
                                 width: context.width,
@@ -101,14 +101,18 @@ class _ChatDetailPageState extends State<InboxPage>{
                                         children: [
                                           Text(
                                             state.inbox[index].connectedUser
-                                                .firstname +' '+ state.inbox[index].connectedUser
-                                                .lastname,
+                                                    .firstname +
+                                                ' ' +
+                                                state.inbox[index].connectedUser
+                                                    .lastname,
                                             style: TextStyle(
                                                 fontWeight: FontWeight.bold),
                                           ),
                                           Text(
-                                            state.inbox[index].lastMessage,
-                                            style: TextStyle(color: Colors.grey),
+
+                                            state.inbox[index].lastMessage.length>15?state.inbox[index].lastMessage.substring(1,15)+"...":state.inbox[index].lastMessage,
+                                            style:
+                                                TextStyle(color: Colors.grey),
                                           )
                                         ],
                                       ),
@@ -130,7 +134,7 @@ class _ChatDetailPageState extends State<InboxPage>{
     );
   }
 
-   getAppbar() {
+  getAppbar() {
     return PreferredSize(
       preferredSize: Size.fromHeight(80),
       child: SafeArea(
@@ -154,18 +158,16 @@ class _ChatDetailPageState extends State<InboxPage>{
                         : Container()),
               ),
               Container(
-                      child: SvgPicture.asset(
-                             notification['active'],
-                        width: 25,
-                        height: 25,
-                      ),
-                    ),
+                child: SvgPicture.asset(
+                  notification['active'],
+                  width: 25,
+                  height: 25,
+                ),
+              ),
             ],
           ),
         ),
       ),
     );
   }
-
-
 }

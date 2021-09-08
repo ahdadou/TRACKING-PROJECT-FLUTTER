@@ -9,12 +9,11 @@ class UserResponse {
   String image;
   //  Gender gender;
   String city;
-  int avergeRating;
+  int ratingAverage;
   bool compteVerifie;
   DateTime birthday;
   String phone;
-  List<ReviewResponse> reviews = [];
-
+int reviewCount;
   UserResponse(
       {
         this.id,
@@ -23,11 +22,12 @@ class UserResponse {
       this.email,
       this.description,
       this.image,
-      this.avergeRating,
+      this.ratingAverage,
       this.compteVerifie,
       this.birthday,
       this.city,
-      this.phone
+      this.phone,
+      this.reviewCount
       });
 
 
@@ -39,11 +39,12 @@ class UserResponse {
       email:jsonMap["email"],
       description:jsonMap["description"],
       image:jsonMap["image"],
-      avergeRating:jsonMap["avergeRating"],
+      ratingAverage:jsonMap["ratingAverage"],
       compteVerifie:jsonMap["compteVerifie"],
       birthday:jsonMap["birthday"],
       city:jsonMap["city"],
       phone:jsonMap["phone"],
+      reviewCount:jsonMap["reviewCount"],
     );
   }
 
@@ -55,11 +56,12 @@ class UserResponse {
     map["email"] = email;
     map["description"] = description;
     map["image"] = image;
-    map["avergeRating"] = avergeRating;
+    map["ratingAverage"] = ratingAverage;
     map["compteVerifie"] = compteVerifie;
     map["birthday"] = birthday;
     map["city"] = city;
     map["phone"] = phone;
+    map["reviewCount"] = reviewCount;
     return map;
   }
 

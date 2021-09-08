@@ -1,7 +1,5 @@
 import 'dart:convert';
 import 'dart:io';
-import 'dart:typed_data';
-
 import 'package:delivery/services/apis.dart';
 import 'package:delivery/shared/models/TokenDto.dart';
 import 'package:delivery/shared/models/userRequestDto.dart';
@@ -41,7 +39,7 @@ Future<void> logout() async {
 Future<bool> updateDataUser(UserRequestDTO userRequestDTO) async {
   final String url = API_ROOT + "oauth/update";
   final client = new http.Client();
-  userRequestDTO.email=await getEmail();
+  userRequestDTO.email = await getEmail();
   print(await getEmail());
   final response = await client.post(
     Uri.parse(url),
@@ -65,10 +63,9 @@ void setAccessToken(jsonString) async {
 }
 
 Future<String> getAccessToken() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.getString('access_token');
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  return prefs.getString('access_token');
 }
-
 
 void setEmail(email) async {
   if (email != null) {
@@ -78,11 +75,10 @@ void setEmail(email) async {
 }
 
 Future<String> getEmail() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String email= prefs.getString('email');
-    return email;
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  String email = prefs.getString('email');
+  return email;
 }
-
 
 void setCurrentUser(jsonString) async {
   if (json.decode(jsonString) != null) {
@@ -92,17 +88,19 @@ void setCurrentUser(jsonString) async {
 }
 
 Future<TokenDto> getTokenDto() async {
-  print('---------------From getTokenDto--------------');
   final SharedPreferences prefs = await SharedPreferences.getInstance();
-  if (prefs.containsKey('token_dto')) {
-    tokenDto.value =
-        TokenDto.fromJSON(json.decode(await prefs.get('token_dto')));
-    tokenDto.value.auth = true;
-  } else {
-    tokenDto.value.auth = false;
+  try {
+    if (prefs.containsKey('token_dto')) {
+      tokenDto.value =
+          TokenDto.fromJSON(json.decode(await prefs.get('token_dto')));
+      tokenDto.value.auth = true;
+    } else {
+      tokenDto.value.auth = false;
+    }
+    return tokenDto.value;
+  } catch (e) {
+    print(e);
   }
-  tokenDto.notifyListeners();
-  return tokenDto.value;
 }
 
 void setTokenDto(jsonString) async {
@@ -110,7 +108,6 @@ void setTokenDto(jsonString) async {
     if (json.decode(jsonString) != null) {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       await prefs.setString('token_dto', jsonString);
-
     }
   } catch (e) {
     print(e.toString());

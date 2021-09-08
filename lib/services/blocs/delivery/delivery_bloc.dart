@@ -18,7 +18,8 @@ class DeliveryBloc extends Bloc<DeliveryEvent, DeliveryState> {
     try {
       if (event is fetchDeliveriesData) {
         yield DeliveryLoadingState();
-        var list = await deliveryRepository.getDeliveriesByCountry();
+        // var list = await deliveryRepository.getDeliveriesByCountry();
+        var list = await deliveryRepository.getAllUsers();
         if (list != null) {
           list.map((e) => print('--------------------- > ' + e.email));
           yield FetchDeliveriesSuccessState(userResponseList: list);

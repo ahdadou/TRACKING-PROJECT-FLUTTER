@@ -1,13 +1,18 @@
 import 'package:delivery/screens/inbox/message_screen.dart';
+import 'package:delivery/services/blocs/review/review_bloc.dart';
 import 'package:delivery/shared/fakeData.dart';
 import 'package:delivery/shared/models/UserResponse.dart';
+import 'package:delivery/shared/models/review.dart';
+import 'package:delivery/shared/models/reviewResponse.dart';
 import 'package:delivery/shared/utils/bottom_navigation_bar_json.dart';
 import 'package:delivery/shared/utils/constants.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:delivery/services/repositories/chatRepository.dart'
     as chatRepository;
+import 'package:delivery/shared/utils/size_config.dart';
 
 class Home extends StatefulWidget {
   final UserResponse userResponse;
@@ -22,7 +27,6 @@ class _HomeState extends State<Home> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    print(widget.userResponse.firstname);
   }
 
   @override
@@ -92,7 +96,7 @@ class _HomeState extends State<Home> {
                                 borderRadius: BorderRadius.circular(30)),
                             child: Center(
                               child: Text(
-                                widget.userResponse.reviews.length.toString(),
+                                widget.userResponse.reviewCount.toString(),
                                 style: TextStyle(
                                     color: Colors.white,
                                     fontWeight: FontWeight.bold),
@@ -104,7 +108,7 @@ class _HomeState extends State<Home> {
                             // height: 50,
                             child: RatingBarIndicator(
                               rating:
-                                  widget.userResponse.avergeRating.toDouble(),
+                                  widget.userResponse.ratingAverage.toDouble(),
                               itemBuilder: (context, index) => Icon(
                                 Icons.star,
                                 color: Colors.amber,
@@ -157,124 +161,142 @@ class _HomeState extends State<Home> {
         Expanded(
             flex: 4,
             child: SingleChildScrollView(
-                child: widget.userResponse.reviews.length > 0
-                    ? Column(
-                        children: List.generate(
-                            widget.userResponse.reviews.length, (index) {
-                        return Container(
-                          margin: EdgeInsets.symmetric(vertical: 4),
-                          padding: EdgeInsets.all(5),
-                          decoration: BoxDecoration(
-                              color: Colors.white,
-                              // borderRadius: BorderRadius.circular(20),
-                              border: Border(
-                                  bottom: BorderSide(
-                                      width: 1,
-                                      color: Colors.grey.withOpacity(0.2)))),
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(
-                                vertical: 6.0, horizontal: 15),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  widget.userResponse.reviews[index].body,
-                                  style: GoogleFonts.lato(
-                                      fontWeight: FontWeight.w600,
-                                      fontSize: 15),
-                                ),
-                                SizedBox(
-                                  height: 10,
-                                ),
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Row(
-                                      children: [
-                                        ClipOval(
-                                          child: Image.network(
-                                            widget.userResponse.reviews[index]
-                                                .user_sender.image,
-                                            height: 50,
-                                            width: 50,
-                                            fit: BoxFit.cover,
+                child: BlocBuilder<ReviewBloc, ReviewState>(
+              builder: (context, state) {
+                if (state is FetchReviewsSuccess) {
+                  return state.reviews.length > 0
+                      ? Column(
+                          children:
+                              List.generate(state.reviews.length, (index) {
+                          return Container(
+                            margin: EdgeInsets.symmetric(vertical: 4),
+                            padding: EdgeInsets.all(5),
+                            decoration: BoxDecoration(
+                                color: Colors.white,
+                                // borderRadius: BorderRadius.circular(20),
+                                border: Border(
+                                    bottom: BorderSide(
+                                        width: 1,
+                                        color: Colors.grey.withOpacity(0.2)))),
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 6.0, horizontal: 15),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    state.reviews[index].body,
+                                    style: GoogleFonts.lato(
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: 15),
+                                  ),
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Row(
+                                        children: [
+                                          ClipOval(
+                                            child: Image.network(
+                                              state.reviews[index].user_sender
+                                                  .image,
+                                              height: 50,
+                                              width: 50,
+                                              fit: BoxFit.cover,
+                                            ),
                                           ),
-                                        ),
-                                        SizedBox(
-                                          width: 10,
-                                        ),
-                                        Column(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.start,
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              widget.userResponse.reviews[index]
-                                                      .user_sender.firstname +
-                                                  ' ' +
-                                                  widget
-                                                      .userResponse
-                                                      .reviews[index]
-                                                      .user_sender
-                                                      .lastname,
-                                              style: TextStyle(
-                                                  fontWeight: FontWeight.w500,
-                                                  fontSize: 15),
-                                            ),
-                                            Container(
-                                              // width: 100,
-                                              // height: 50,
-                                              child: RatingBarIndicator(
-                                                rating: widget.userResponse
-                                                    .reviews[index].rating
-                                                    .toDouble(),
-                                                itemBuilder: (context, index) =>
-                                                    Icon(
-                                                  Icons.star,
-                                                  color: Colors.amber,
-                                                ),
-                                                itemCount: 5,
-                                                itemSize: 20.0,
-                                                unratedColor:
-                                                    Colors.amber.withAlpha(50),
-                                                direction: Axis.horizontal,
+                                          SizedBox(
+                                            width: 10,
+                                          ),
+                                          Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.start,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                state.reviews[index].user_sender
+                                                        .firstname +
+                                                    ' ' +
+                                                    state
+                                                        .reviews[index]
+                                                        .user_sender
+                                                        .lastname,
+                                                style: TextStyle(
+                                                    fontWeight: FontWeight.w500,
+                                                    fontSize: 15),
                                               ),
-                                            ),
-                                          ],
-                                        ),
-                                      ],
-                                    ),
-                                    Text(
-                                      "12/12/12:09:87",
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.w500,
-                                          color: Colors.grey.withOpacity(0.5)),
-                                    )
-                                  ],
-                                ),
-                              ],
+                                              Container(
+                                                // width: 100,
+                                                // height: 50,
+                                                child: RatingBarIndicator(
+                                                  rating: state
+                                                      .reviews[index].rating
+                                                      .toDouble(),
+                                                  itemBuilder:
+                                                      (context, index) => Icon(
+                                                    Icons.star,
+                                                    color: Colors.amber,
+                                                  ),
+                                                  itemCount: 5,
+                                                  itemSize: 20.0,
+                                                  unratedColor: Colors.amber
+                                                      .withAlpha(50),
+                                                  direction: Axis.horizontal,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+                                      Text(
+                                        "12/12/12:09:87",
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.w500,
+                                            color:
+                                                Colors.grey.withOpacity(0.5)),
+                                      )
+                                    ],
+                                  ),
+                                ],
+                              ),
                             ),
+                          );
+                        }))
+                      : Center(
+                          child: Container(
+                            child: Text("AUCUN"),
                           ),
                         );
-                      }))
-                    : Center(
-                        child: Container(
-                          child: Text("AUCUN"),
-                        ),
-                      ))),
+                } else if (state is FetchDataLoading)
+                  return Container(
+                    width: context.width,
+                    height: context.height,
+                    child: Center(
+                      child: CircularProgressIndicator(),
+                    ),
+                  );
+                else
+                  return Center(
+                    child: Container(
+                      child: Text("AUCUN"),
+                    ),
+                  );
+              },
+            ))),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
           child: InkWell(
-            onTap: () async{
-
+            onTap: () async {
               // var id = await chatRepository.getInboxId(widget.userResponse.email);
               Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) =>MessagesPage(
+                      builder: (context) => MessagesPage(
                             userResponse: widget.userResponse,
                             inboxId: -1,
                           )));

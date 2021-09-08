@@ -30,8 +30,7 @@ class _HomeState extends State<Home> {
             return SingleChildScrollView(
               physics: NeverScrollableScrollPhysics(),
               child: ConstrainedBox(
-                constraints: BoxConstraints(
-                    maxHeight: context.height),
+                constraints: BoxConstraints(maxHeight: context.height),
                 child: Padding(
                   padding: const EdgeInsets.only(bottom: 20),
                   child: Column(
@@ -43,16 +42,17 @@ class _HomeState extends State<Home> {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Column(
+                              Row(
                                 children: [
-                                  cityPicker(),
+                                  // cityPicker(),
                                   Container(
-                                    padding: EdgeInsets.symmetric(horizontal: 20),
+                                    padding:
+                                        EdgeInsets.symmetric(horizontal: 20),
                                     height: 40,
                                     width: 300,
                                     decoration: BoxDecoration(
-                                        borderRadius:
-                                            BorderRadius.all(Radius.circular(30)),
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(30)),
                                         color: Colors.grey.withOpacity(0.3)),
                                     child: Row(
                                       children: [
@@ -80,18 +80,22 @@ class _HomeState extends State<Home> {
                                       ],
                                     ),
                                   ),
+                                  Container(
+                                    padding:
+                                        const EdgeInsets.only(bottom: 10.0),
+                                    child: Center(
+                                      child: IconButton(
+                                          onPressed: () {
+                                            BlocProvider.of<DeliveryBloc>(
+                                                    context)
+                                                .add(fetchDeliveryByCityOrEmail(
+                                                    param: myController.text));
+                                          },
+                                          icon: Icon(Icons.filter_alt_rounded)),
+                                    ),
+                                  )
                                 ],
                               ),
-                              Container(
-                                padding: const EdgeInsets.only(bottom: 10.0),
-                                child: Center(
-                                  child: IconButton(
-                                      onPressed: () {
-                                        BlocProvider.of<DeliveryBloc>(context).add(fetchDeliveryByCityOrEmail(param:myController.text ));
-                                      },
-                                      icon: Icon(Icons.filter_alt_rounded)),
-                                ),
-                              )
                             ],
                           ),
                         ),
@@ -107,7 +111,13 @@ class _HomeState extends State<Home> {
                                 onTap: () {
                                   // Navigator.pushNamed(
                                   //     context, ProfileScreen.routeName);
-                                  Navigator.push(context, MaterialPageRoute(builder: (context)=>ProfileScreen(userResponse: state.userResponseList[index],)));
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => ProfileScreen(
+                                                userResponse: state
+                                                    .userResponseList[index],
+                                              )));
                                 },
                                 child: Container(
                                   margin: EdgeInsets.symmetric(vertical: 2),
@@ -116,8 +126,8 @@ class _HomeState extends State<Home> {
                                       border: Border(
                                           bottom: BorderSide(
                                               width: 1,
-                                              color:
-                                                  Colors.grey.withOpacity(0.2)))),
+                                              color: Colors.grey
+                                                  .withOpacity(0.2)))),
                                   child: Padding(
                                     padding: const EdgeInsets.symmetric(
                                         vertical: 6.0, horizontal: 5),
@@ -133,7 +143,9 @@ class _HomeState extends State<Home> {
                                               child: Stack(
                                                 children: [
                                                   Image.network(
-                                                    state.userResponseList[index]
+                                                    state
+                                                            .userResponseList[
+                                                                index]
                                                             .image ??
                                                         users[index].image,
                                                     height: 50,
@@ -148,19 +160,17 @@ class _HomeState extends State<Home> {
                                                           child: Container(
                                                             width: 15,
                                                             height: 15,
-                                                            decoration:
-                                                                BoxDecoration(
-                                                                    shape: BoxShape
-                                                                        .circle,
-                                                                    color: Colors
-                                                                            .blue[
-                                                                        600]),
+                                                            decoration: BoxDecoration(
+                                                                shape: BoxShape
+                                                                    .circle,
+                                                                color: Colors
+                                                                    .blue[600]),
                                                             child: Center(
                                                               child: Icon(
                                                                 Icons.check,
                                                                 size: 15,
-                                                                color:
-                                                                    Colors.white,
+                                                                color: Colors
+                                                                    .white,
                                                               ),
                                                             ),
                                                           ))
@@ -180,10 +190,12 @@ class _HomeState extends State<Home> {
                                                           .firstname +
                                                       ' ' +
                                                       state
-                                                          .userResponseList[index]
+                                                          .userResponseList[
+                                                              index]
                                                           .lastname,
                                                   style: TextStyle(
-                                                      fontWeight: FontWeight.w500,
+                                                      fontWeight:
+                                                          FontWeight.w500,
                                                       fontSize: 15),
                                                 ),
                                                 Row(
@@ -193,7 +205,7 @@ class _HomeState extends State<Home> {
                                                         rating: state
                                                             .userResponseList[
                                                                 index]
-                                                            .avergeRating
+                                                            .ratingAverage
                                                             .floorToDouble(),
                                                         itemBuilder:
                                                             (context, index) =>
@@ -203,7 +215,8 @@ class _HomeState extends State<Home> {
                                                         ),
                                                         itemCount: 5,
                                                         itemSize: 20.0,
-                                                        unratedColor: Colors.amber
+                                                        unratedColor: Colors
+                                                            .amber
                                                             .withAlpha(50),
                                                         direction:
                                                             Axis.horizontal,
@@ -214,12 +227,11 @@ class _HomeState extends State<Home> {
                                                           state
                                                               .userResponseList[
                                                                   index]
-                                                              .reviews
-                                                              .length
+                                                              .reviewCount
                                                               .toString() +
                                                           " reviews)",
-                                                      style:
-                                                          TextStyle(fontSize: 11),
+                                                      style: TextStyle(
+                                                          fontSize: 11),
                                                     )
                                                   ],
                                                 ),
@@ -233,8 +245,10 @@ class _HomeState extends State<Home> {
                                                       width: 6,
                                                     ),
                                                     Text(state
-                                                        .userResponseList[index]
-                                                        .city??'')
+                                                            .userResponseList[
+                                                                index]
+                                                            .city ??
+                                                        '')
                                                   ],
                                                 )
                                               ],
@@ -254,23 +268,22 @@ class _HomeState extends State<Home> {
                 ),
               ),
             );
-          } 
-          else if (state is DeliveryLoadingState) {
+          } else if (state is DeliveryLoadingState) {
             return Container(
-                    width: context.width,
-                    height: context.height,
-                    child: Center(
-                      child: CircularProgressIndicator(),
-                    ),
-                  );
+              width: context.width,
+              height: context.height,
+              child: Center(
+                child: CircularProgressIndicator(),
+              ),
+            );
           } else {
             return Container(
-                    width: context.width,
-                    height: context.height,
-                    child: Center(
-                      child: CircularProgressIndicator(),
-                    ),
-                  );
+              width: context.width,
+              height: context.height,
+              child: Center(
+                child: CircularProgressIndicator(),
+              ),
+            );
           }
         },
       ),

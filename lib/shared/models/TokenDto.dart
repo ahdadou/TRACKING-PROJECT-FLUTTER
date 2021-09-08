@@ -7,7 +7,7 @@ class TokenDto {
    bool newAccount;
 
   // used for indicate if client logged in or not
-  bool auth;
+  bool auth=false;
 
   TokenDto( {this.newAccount,this.value, this.email, this.firstname, this.lastname, this.image});
 

@@ -1,4 +1,3 @@
-import 'package:delivery/screens/home/home_screen.dart';
 import 'package:delivery/screens/information/information_screen.dart';
 import 'package:delivery/screens/root/root_app.dart';
 import 'package:delivery/services/blocs/auth/auth_bloc.dart';
@@ -37,7 +36,6 @@ class _HomeState extends State<Home> {
           }
           if(state is AuthenticatedNewAccountState){
             Navigator.pushNamed(context, InfoScreen.routeName);
-
           }
         },
         child: BlocBuilder<AuthBloc, AuthState>(builder: (context, state) {
