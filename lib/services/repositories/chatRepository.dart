@@ -15,6 +15,7 @@ import 'package:http/http.dart' as http;
 
 
 var messages$ = new BehaviorSubject<List<Messages>>();
+var newMessages$ = new BehaviorSubject<bool>();
 
 
 //get Inbox By User Email
@@ -67,6 +68,7 @@ Future<List<Messages>> getMessagesByInboxId(int id) async {
     var messages = (json.decode(response.body) as List)
         .map((e) => Messages.fromJSON(e))
         .toList();
+    // messages$.sink.add(messages);
     listMessages = messages;
     return messages;
   }
@@ -129,7 +131,7 @@ Future<Messages> sendMessages({String receiver_email, String msg}) async {
   return _message;
 }
 
-StompClient stompClient = StompClient(
+StompClient chatStompClient = StompClient(
   config: StompConfig(
     // url: "ws://34.125.143.57/flutter",
     url: "ws://192.168.1.106:9004/flutter",
@@ -149,15 +151,18 @@ StompClient stompClient = StompClient(
 );
 
 void onConnected(StompFrame frame) {
-  stompClient.subscribe(
+  chatStompClient.subscribe(
     destination: '/user/' + tokenDto.value.email + '/queue/chat',
     callback: (frame) {
       // List<String> result = json.decode(frame.body);
-       var message = Messages.fromJSON(json.decode(frame.body));
-      var messageslist=messages$.value;
+      var message = Messages.fromJSON(json.decode(frame.body));
+      List<Messages> messageslist=[];
+      if(messages$.hasValue)
+      messageslist=messages$.value;
+
       messageslist.add(message);
       messages$.sink.add(messageslist);
-      print('--------eeeee');
+      newMessages$.sink.add(true);
     },
   );
 }

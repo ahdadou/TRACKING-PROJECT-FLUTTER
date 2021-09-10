@@ -15,18 +15,21 @@ class _ScreenPageState extends State<SeetingPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: DefaultButton(
-            color: kPrimaryColor,
-            title: "LOGOUT",
-            press: (){
-authRepository.logout();
-            },
-            icon: null,
-        )
-
-          
-        
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 30),
+            child: DefaultButton(
+                color: kPrimaryColor,
+                title: "LOGOUT",
+                press: (){
+                    authRepository.logout();
+                },
+                icon: null,
+            ),
+          ),
+        ],
       ),
       
     );

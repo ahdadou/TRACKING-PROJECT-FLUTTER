@@ -185,11 +185,14 @@ class _HomeState extends State<Home> {
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text(
-                                    state.reviews[index].body,
-                                    style: GoogleFonts.lato(
-                                        fontWeight: FontWeight.w600,
-                                        fontSize: 15),
+                                  Padding(
+                                    padding: const EdgeInsets.only(left: 10,right: 10),
+                                    child: Text(
+                                      state.reviews[index].body,
+                                      style: GoogleFonts.lato(
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 15),
+                                    ),
                                   ),
                                   SizedBox(
                                     height: 10,
@@ -254,7 +257,7 @@ class _HomeState extends State<Home> {
                                         ],
                                       ),
                                       Text(
-                                        "12/12/12:09:87",
+                                        formatDateTime(state.reviews[index].createAt),
                                         style: TextStyle(
                                             fontWeight: FontWeight.w500,
                                             color:

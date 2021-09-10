@@ -1,6 +1,7 @@
 import 'package:delivery/screens/inbox/message_screen.dart';
 import 'package:delivery/screens/root/root_app.dart';
 import 'package:delivery/services/blocs/inbox/inbox_bloc.dart';
+import 'package:delivery/services/repositories/chatRepository.dart';
 import 'package:delivery/shared/utils/bottom_navigation_bar_json.dart';
 import 'package:delivery/shared/utils/size_config.dart';
 import 'package:delivery/services/repositories/LoginRepository.dart';
@@ -8,6 +9,8 @@ import 'package:delivery/shared/fakeData.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+
+
 
 class InboxPage extends StatefulWidget {
   static String routeName = "/inbox";
@@ -22,6 +25,7 @@ class _ChatDetailPageState extends State<InboxPage> {
   @override
   void initState() {
     // TODO: implement initState
+    newMessages$.add(false);
   }
 
   @override

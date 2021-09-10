@@ -21,16 +21,14 @@ class DeliveryBloc extends Bloc<DeliveryEvent, DeliveryState> {
         // var list = await deliveryRepository.getDeliveriesByCountry();
         var list = await deliveryRepository.getAllUsers();
         if (list != null) {
-          list.map((e) => print('--------------------- > ' + e.email));
           yield FetchDeliveriesSuccessState(userResponseList: list);
         } else
           yield DeliveryFaillerState();
       }
        if (event is fetchDeliveryByCityOrEmail) {
         yield DeliveryLoadingState();
-        var list = await deliveryRepository.getDeliveriesByCityOrEmail(event.param);
+        var list = await deliveryRepository.getAllUsersByCityOrEmail(event.param);
         if (list != null) {
-          list.map((e) => print('--------------------- > ' + e.email));
           yield FetchDeliveriesSuccessState(userResponseList: list);
         } else
           yield DeliveryFaillerState();
